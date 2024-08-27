@@ -57,12 +57,14 @@ Before you begin, ensure you have met the following requirements:
      npm install
      ```
 
-   - Create a `.env` file in the `backend` directory and add your MongoDB URI and JWT secret:
+   - Create a `.env` file in the `backend` directory and add your Email, App specific email password, MongoDB URI and JWT secret:
 
      ```plaintext
      MONGO_URI = your_mongodb_uri_here
      JWT_SECRET = your_jwt_secret_here
      PORT=5000
+     EMAIL_USER = your_email_here
+     EMAIL_PASS = your_app_specific_email_password
      ```
 
 3. **Frontend Setup**

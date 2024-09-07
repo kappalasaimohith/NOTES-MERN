@@ -31,6 +31,10 @@ const NoteList = ({ notes, setNotes }) => {
       setLoadingId(null);
     }
   };
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  };
 
   const handleEdit = (note) => {
     setEditNoteId(note._id);
@@ -90,6 +94,10 @@ const NoteList = ({ notes, setNotes }) => {
               className="bg-teal-300 p-4 rounded-lg shadow-xl transform transition-transform hover:shadow-2xl relative overflow-hidden border-2 border-teal-400 scrollableContent"
             >
               <div className="absolute top-0 right-0 p-2 flex space-x-2">
+                <p>
+                   Created at: {formatDate(note.createdAt)} <br />
+                   Modified at: {formatDate(note.updatedAt)}
+                </p>
                 <button
                   onClick={() => handleEdit(note)}
                   disabled={loadingId === note._id}

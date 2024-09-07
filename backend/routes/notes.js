@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// Middleware to check JWT
 const auth = (req, res, next) => {
     const token = req.header('Authorization').replace('Bearer ', '');
     if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
@@ -18,7 +17,6 @@ const auth = (req, res, next) => {
     }
 };
 
-// Get all notes
 router.get('/', auth, async (req, res) => {
     try {
         const notes = await Note.find({ userId: req.user.userId });
@@ -28,7 +26,6 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// Create a note
 router.post('/', auth, async (req, res) => {
     const { title, content } = req.body;
     try {
@@ -44,7 +41,6 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
-// Update a note
 router.put('/:id', auth, async (req, res) => {
     const { title, content } = req.body;
     try {
@@ -59,7 +55,6 @@ router.put('/:id', auth, async (req, res) => {
     }
 });
 
-// Delete a note
 router.delete('/:id', auth, async (req, res) => {
     try {
         await Note.findByIdAndDelete(req.params.id);

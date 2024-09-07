@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import NoteList from './NoteList';
 import NoteForm from './NoteForm';
+import UserProfile from './UserProfile';
 
 const apiurl = import.meta.env.VITE_API_URL;
 
@@ -56,6 +57,7 @@ const Dashboard = () => {
         </div>
         <div className="mt-auto">
           <NoteForm setNotes={setNotes} />
+          <UserProfile /> 
         </div>
       </div>
       <div className="w-full bg-blue-500 p-4">

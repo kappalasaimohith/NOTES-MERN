@@ -7,7 +7,6 @@ const authRoutes = require('./routes/auth');
 const noteRoutes = require('./routes/notes');
 
 // Use routes
-
 const app = express();
 
 // Middleware

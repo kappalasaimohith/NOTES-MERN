@@ -74,7 +74,7 @@ const Dashboard = () => {
           />
         ) : (
           <p className='text-center text-gray-200'>Select a note to view details</p>
-        )}
+        )}  
       </div>
     </div>
   );

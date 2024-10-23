@@ -5,16 +5,19 @@ import Navbar from '../components/Navbar';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid';
 
 const apiurl = import.meta.env.VITE_API_URL;
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setMessage('');
   };
 
   const handleSubmit = async (e) => {
@@ -22,11 +25,11 @@ const Login = () => {
     try {
       const res = await axios.post(`${apiurl}/api/auth/login`, formData);
       localStorage.setItem('token', res.data.token);
-      alert('Login successful!');
-      navigate('/dashboard');
+      setMessage('Login successful! Redirecting to dashboard...');
+      setTimeout(() => navigate('/dashboard'), 2000);
     } catch (error) {
       console.error(error);
-      alert('Uh oh....Invalid Credentials. Login failed!');
+      setMessage('Invalid Credentials. Login failed!');
     }
   };
 
@@ -39,7 +42,7 @@ const Login = () => {
       <Navbar />
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-900 to-blue-400">
         <div className="p-8 rounded-2xl shadow-lg max-w-sm w-full hover:shadow-2xl">
-          <h2 className=" text-[#fff] text-3xl font-extrabold mb-6 text-center">Login</h2>
+          <h2 className="text-[#fff] text-3xl font-extrabold mb-6 text-center">Login</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
@@ -72,6 +75,11 @@ const Login = () => {
                 )}
               </button>
             </div>
+            {message && (
+              <p className={`text-sm mb-4 ${message.includes('successful') ? 'text-green-500' : 'text-red-500'}`}>
+                {message}
+              </p>
+            )}
             <button
               type="submit"
               className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"

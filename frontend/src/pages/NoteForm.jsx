@@ -27,7 +27,7 @@ const NoteForm = ({ setNotes }) => {
   };
 
   return (
-    <div className="max-w-sm mx-auto p-6 bg-gray-100 rounded-2xl shadow-lg">
+    <div className="max-w-sm mx-auto p-6 rounded-2xl shadow-lg">
       {!isFormVisible ? (
         <div className="flex justify-center mb-4">
           <button

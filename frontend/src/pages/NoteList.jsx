@@ -12,25 +12,37 @@ const NoteList = ({ notes, setNotes }) => {
   const [updatedContent, setUpdatedContent] = useState('');
   const [expandedNoteId, setExpandedNoteId] = useState(null);
   const [showReadMore, setShowReadMore] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState({ visible: false, id: null });
   const contentRefs = useRef({});
 
   const token = localStorage.getItem('token');
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this note?')) return;
+  const handleDeleteClick = (id) => {
+    setConfirmDelete({ visible: true, id });
+  };
 
-    setLoadingId(id);
+  const handleDeleteConfirm = async () => {
+    if (!confirmDelete.id) return;
+
+    setLoadingId(confirmDelete.id);
     try {
-      await axios.delete(`${apiurl}/api/notes/${id}`, {
+      await axios.delete(`${apiurl}/api/notes/${confirmDelete.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== confirmDelete.id));
     } catch (error) {
       console.error("Error deleting note:", error);
     } finally {
       setLoadingId(null);
+      setConfirmDelete({ visible: false, id: null });
+      window.location.reload();
     }
   };
+
+  const handleDeleteCancel = () => {
+    setConfirmDelete({ visible: false, id: null });
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
@@ -44,7 +56,7 @@ const NoteList = ({ notes, setNotes }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    
+
     setLoadingId(editNoteId);
     try {
       await axios.put(`${apiurl}/api/notes/${editNoteId}`, {
@@ -83,7 +95,7 @@ const NoteList = ({ notes, setNotes }) => {
   }, [notes]);
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-r rounded-lg from-indigo-500 via-purple-500 to-pink-500">
+    <div className="p-6 min-h-screen rounded-lg from-indigo-500 via-purple-500 to-pink-500">
       <div className="max-w-full">
         {notes.length === 0 ? (
           <p className="text-center text-white col-span-full">No notes available.</p>
@@ -106,7 +118,7 @@ const NoteList = ({ notes, setNotes }) => {
                   <FaEdit className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => handleDelete(note._id)}
+                  onClick={() => handleDeleteClick(note._id)}
                   disabled={loadingId === note._id}
                   className="bg-red-500 hover:bg-red-700 text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110"
                 >
@@ -151,7 +163,7 @@ const NoteList = ({ notes, setNotes }) => {
                 type="text"
                 value={updatedTitle}
                 onChange={(e) => setUpdatedTitle(e.target.value)}
-                className="form-input mt-1 block w-full border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                className="form-input mt-1 block w-full p-2 border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
                 required
               />
             </label>
@@ -160,7 +172,7 @@ const NoteList = ({ notes, setNotes }) => {
               <textarea
                 value={updatedContent}
                 onChange={(e) => setUpdatedContent(e.target.value)}
-                className="form-textarea mt-1 block w-full border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                className="form-textarea mt-1 p-2 block w-full border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
                 rows="6"
                 required
               />
@@ -181,6 +193,29 @@ const NoteList = ({ notes, setNotes }) => {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {confirmDelete.visible && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h3 className="text-xl font-semibold mb-4">Confirm Deletion</h3>
+            <p className="mb-4">Are you sure you want to delete this note?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={handleDeleteConfirm}
+                className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md shadow-md"
+              >
+                Delete
+              </button>
+              <button
+                onClick={handleDeleteCancel}
+                className="bg-gray-600 hover:bg-gray-800 text-white px-4 py-2 rounded-md shadow-md"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

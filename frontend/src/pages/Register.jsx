@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 const apiurl = import.meta.env.VITE_API_URL;
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -11,22 +12,23 @@ const Register = () => {
     email: '',
     password: '',
   });
-
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrorMessage('');
+    setSuccessMessage('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(formData);
       const res = await axios.post(`${apiurl}/api/auth/register`, formData);
       console.log(res.data);
-      alert('Registration successful!');
-      navigate('/login');
+      setSuccessMessage('Registration successful! You can now log in.');
+      setFormData({ username: '', email: '', password: '' });
+      setTimeout(() => navigate('/login'), 5000);
     } catch (error) {
       if (error.response && error.response.data && error.response.data.msg) {
         setErrorMessage(error.response.data.msg);
@@ -82,6 +84,9 @@ const Register = () => {
             </div>
             {errorMessage && (
               <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+            )}
+            {successMessage && (
+              <p className="text-green-500 text-sm mb-4">{successMessage}</p>
             )}
             <button
               type="submit"

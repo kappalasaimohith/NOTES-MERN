@@ -112,12 +112,17 @@ Here's an overview of the project structure:
 ```
 NOTES-MERN/
 ├── backend/
+│   ├── middleware/
+│   │   ├── authenticateToken.js
 │   ├── models/
 │   │   ├── Note.js
+│   │   ├── PasswordResetToken.js
 │   │   └── User.js
 │   ├── routes/
 │   │   ├── auth.js
 │   │   └── notes.js
+│   ├── utils/
+│   │   ├── sendEmail.js
 │   ├── server.js
 │   └── .env
 └── frontend/
@@ -126,11 +131,16 @@ NOTES-MERN/
     │   │   └── Navbar.jsx
     │   ├── pages/
     │   │   ├── Dashboard.jsx
+    │   │   ├── ForgotPassword.jsx
+    │   │   ├── Home.jsx
     │   │   ├── Login.jsx
     │   │   ├── NoteForm.jsx
+    │   │   ├── NoteList.css
     │   │   ├── NoteList.jsx
     │   │   ├── ProtectedRoute.jsx
-    │   │   └── Register.jsx
+    │   │   ├── Register.jsx
+    │   │   ├── ResetPassword.jsx
+    │   │   └── UserProfile.jsx
     │   ├── App.jsx
     │   ├── main.jsx
     │   └── index.css

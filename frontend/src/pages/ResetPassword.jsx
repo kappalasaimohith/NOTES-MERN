@@ -11,11 +11,15 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${apiurl}/api/auth/reset-password/${token}`, { password });
+      await axios.post(`${apiurl}/api/auth/reset-password/${token}`,
+         { password },
+        { headers: { "Content-Type": "application/json" } }
+      );
       alert('Password successfully reset!');
       navigate('/login');
     } catch (error) {
-      alert('Error resetting password');
+      console.error("Error resetting password:", error.response?.data || error.message);
+      alert(error.response?.data?.msg || 'Error resetting password');
     }
   };
 

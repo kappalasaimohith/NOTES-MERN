@@ -8,11 +8,15 @@ function authenticateToken(req, res, next) {
     return res.status(401).json({ msg: 'No token provided, authorization denied' });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ msg: 'Token expired, please log in again' });
+      }
       return res.status(403).json({ msg: 'Invalid token' });
     }
-    req.user = user;
+
+    req.user = decoded;
     next();
   });
 }

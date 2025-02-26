@@ -9,6 +9,8 @@ const Note=require('../models/Note');
 const router = express.Router();
 const sendEmail = require('../utils/sendEmail');
 
+const apiurl="http://localhost:5173";
+
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -56,7 +58,7 @@ router.post('/forgot-password', async (req, res) => {
     if (!user) {
       return res.status(400).json({ msg: 'User not found' });
     }
-
+    await PasswordResetToken.deleteMany({ userId: user._id });
     const token = crypto.randomBytes(32).toString('hex');
     const resetToken = new PasswordResetToken({ userId: user._id, token });
     await resetToken.save();
@@ -64,10 +66,11 @@ router.post('/forgot-password', async (req, res) => {
     const resetUrl = `${apiurl}/reset-password/${token}`;
     
     await sendEmail(email, 'Password Reset Request', `Click the following link to reset your password: ${resetUrl}`);
-
+    console.log("Reset Token Generated:", token);
     res.json({ msg: 'Password reset link sent!' });
   } catch (error) {
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Error during forgot password process:', error);
+    res.status(500).json({ msg: 'Server error', error: error.message });
   }
 });
   
@@ -75,7 +78,7 @@ router.post('/reset-password/:token', async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-
+    // console.log("Token received:", token);
     const resetToken = await PasswordResetToken.findOne({ token });
     if (!resetToken) {
       return res.status(400).json({ msg: 'Invalid or expired token' });
@@ -84,9 +87,11 @@ router.post('/reset-password/:token', async (req, res) => {
     const user = await User.findById(resetToken.userId);
     if (!user) {
       return res.status(400).json({ msg: 'User not found' });
-    }
+    } 
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
 
-    user.password = password;
+    // console.log(user.password);
 
     await user.save();
 
@@ -109,7 +114,7 @@ router.delete('/delete-user/:id', authenticateToken, async (req, res) => {
         return res.status(403).json({ msg: 'Unauthorized action' });
       }
       
-      const deletedNotes = await Note.deleteMany({ userId });
+      // const deletedNotes = await Note.deleteMany({ userId });
       // console.log("User ID: ",userId);
       // console.log("Authenticated User ID:", req.user.userId);
       // console.log("Deleted notes count:", deletedNotes.deletedCount);

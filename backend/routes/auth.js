@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authenticateToken = require('../middleware/authenticateToken');
-// const Note = require('../models/Note');
 const router = express.Router();
 const sendEmail = require('../utils/sendEmail');
 const generateWelcomeEmail = require('../utils/registerTemplate');
@@ -44,12 +43,8 @@ router.post('/login', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // console.log("User found:", user.email);
-    // console.log("Stored password in DB:", user.password);
-
     const isMatch = await bcrypt.compare(password, user.password);
-    // console.log("Password Match:", isMatch);
-
+    
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -79,7 +74,6 @@ router.post('/forgot-password', async (req, res) => {
     const resetUrl = `${apiurl}/reset-password/${token}`;
     const resetPasswordContent = resetPasswordTemplate(user.username, resetUrl);
     await sendEmail(email, 'Password Reset Request', resetPasswordContent);
-    // console.log("Reset Token Generated:", token);
     res.json({ msg: 'Password reset link sent!' });
   } catch (error) {
     console.error('Error during forgot password process:', error);
@@ -91,7 +85,6 @@ router.post('/reset-password/:token', async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-    // console.log("Token received:", token);
     const resetToken = await PasswordResetToken.findOne({});
     if (!resetToken) {
       console.log("Token not found or expired.");
@@ -108,13 +101,7 @@ router.post('/reset-password/:token', async (req, res) => {
       console.log("User not found for this token.");
       return res.status(400).json({ msg: 'User not found' });
     }
-    // const salt = await bcrypt.genSalt(10);
-    // console.log("Old password:", user.password);
     user.password = password;
-    // user.password = await bcrypt.hash(password, salt);
-    // console.log("New hashed password:", user.password);
-    // const updatedUser = await user.save();
-    // console.log("Updated User:", updatedUser);
     await user.save();
 
     await resetToken.deleteOne();
@@ -136,10 +123,6 @@ router.delete('/delete-user/:id', authenticateToken, async (req, res) => {
       return res.status(403).json({ msg: 'Unauthorized action' });
     }
 
-    // const deletedNotes = await Note.deleteMany({ userId });
-    // console.log("User ID: ",userId);
-    // console.log("Authenticated User ID:", req.user.userId);
-    // console.log("Deleted notes count:", deletedNotes.deletedCount);
     const user = await User.findByIdAndDelete(userId);
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });

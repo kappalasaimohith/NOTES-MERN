@@ -8,8 +8,9 @@ const authenticateToken = require('../middleware/authenticateToken');
 // const Note = require('../models/Note');
 const router = express.Router();
 const sendEmail = require('../utils/sendEmail');
-
-const apiurl = "http://localhost:5173";
+const generateWelcomeEmail = require('../utils/registerTemplate');
+const resetPasswordTemplate = require('../utils/resetPasswordTemplate');
+const apiurl = process.env.FRONTEND_URL;
 
 router.post('/register', async (req, res) => {
   try {
@@ -22,8 +23,9 @@ router.post('/register', async (req, res) => {
 
     user = new User({ username, email, password });
     await user.save();
+    const emailContent = generateWelcomeEmail(username, apiurl);
 
-    await sendEmail(email, 'Welcome to Our App', `Hi ${username}, welcome to our app!`);
+    await sendEmail(email, 'Welcome to Our App', emailContent);
 
     res.status(201).json({ msg: 'User registered successfully' });
   } catch (error) {
@@ -75,8 +77,8 @@ router.post('/forgot-password', async (req, res) => {
     await resetToken.save();
 
     const resetUrl = `${apiurl}/reset-password/${token}`;
-
-    await sendEmail(email, 'Password Reset Request', `Click the following link to reset your password: ${resetUrl}`);
+    const resetPasswordContent = resetPasswordTemplate(user.username, resetUrl);
+    await sendEmail(email, 'Password Reset Request', resetPasswordContent);
     // console.log("Reset Token Generated:", token);
     res.json({ msg: 'Password reset link sent!' });
   } catch (error) {
@@ -106,14 +108,14 @@ router.post('/reset-password/:token', async (req, res) => {
       console.log("User not found for this token.");
       return res.status(400).json({ msg: 'User not found' });
     }
-    const salt = await bcrypt.genSalt(10);
-    console.log("Old password:", user.password);
+    // const salt = await bcrypt.genSalt(10);
+    // console.log("Old password:", user.password);
     user.password = password;
     // user.password = await bcrypt.hash(password, salt);
     // console.log("New hashed password:", user.password);
     // const updatedUser = await user.save();
     // console.log("Updated User:", updatedUser);
-
+    await user.save();
 
     await resetToken.deleteOne();
 

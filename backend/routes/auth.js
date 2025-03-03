@@ -77,7 +77,7 @@ router.post('/forgot-password', async (req, res) => {
     const resetUrl = `${apiurl}/reset-password/${token}`;
 
     await sendEmail(email, 'Password Reset Request', `Click the following link to reset your password: ${resetUrl}`);
-    console.log("Reset Token Generated:", token);
+    // console.log("Reset Token Generated:", token);
     res.json({ msg: 'Password reset link sent!' });
   } catch (error) {
     console.error('Error during forgot password process:', error);
@@ -111,8 +111,8 @@ router.post('/reset-password/:token', async (req, res) => {
     user.password = password;
     // user.password = await bcrypt.hash(password, salt);
     // console.log("New hashed password:", user.password);
-    const updatedUser = await user.save();
-    console.log("Updated User:", updatedUser);
+    // const updatedUser = await user.save();
+    // console.log("Updated User:", updatedUser);
 
 
     await resetToken.deleteOne();

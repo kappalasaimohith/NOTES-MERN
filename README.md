@@ -81,6 +81,11 @@ Before you begin, ensure you have met the following requirements:
      npm install
      ```
 
+     Create a .env in the frontend directory and add your your backend API URL:
+     ```
+     VITE_API_URL = http://localhost:5000
+     ```
+
 ## Running the Application
 
 1. **Start the Backend Server**

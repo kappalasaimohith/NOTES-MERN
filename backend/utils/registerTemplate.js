@@ -35,7 +35,7 @@ function generateWelcomeEmail(username, apiurl) {
             line-height: 1.8;
           }
           .btn-container {
-            text-align: center; /* Center the button container */
+            text-align: center;
             margin-top: 25px;
           }
           .btn {

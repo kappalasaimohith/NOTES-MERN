@@ -1,35 +1,119 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 
 const Navbar = () => {
   return (
-    <nav className="bg-[#001f3f] p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-[#e0f7fa] text-xl font-bold">Notes</h1>
-        <div className="flex space-x-4">
-          <Link
+    <AppBar position="sticky" sx={{ backgroundColor: '#001f3f' }}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h6" sx={{ color: '#e0f7fa', fontWeight: 'bold' }}>
+          Notes
+        </Typography>
+        <div>
+          <Button
+            component={Link}
             to="/"
-            className="relative inline-block font-medium px-4 py-2 text-[#e0f7fa] bg-[#004080] rounded-3xl text-lg group transition-transform duration-300 hover:bg-[#003366] hover:translate-y-[-3px]"
+            sx={{
+              color: '#e0f7fa',
+              backgroundColor: '#004080',
+              borderRadius: '30px',
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: 'medium',
+              marginRight: '8px',
+              '&:hover': {
+                backgroundColor: '#003366',
+                transform: 'translateY(-3px)',
+              },
+              position: 'relative',
+              padding: '8px 16px',
+            }}
           >
             Home
-            <span className="absolute bottom-[-5px] left-0 w-full h-[3px] bg-[#007bff] transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 origin-left"></span>
-          </Link>
-          <Link
+            <span
+              style={{
+                position: 'absolute',
+                bottom: '-5px',
+                left: 0,
+                width: '100%',
+                height: '3px',
+                backgroundColor: '#007bff',
+                transform: 'scaleX(0)',
+                transition: 'transform 0.3s ease',
+              }}
+              className="underline-hover"
+            />
+          </Button>
+          <Button
+            component={Link}
             to="/login"
-            className="relative inline-block font-medium px-4 py-2 text-[#e0f7fa] bg-[#004080] rounded-3xl text-lg group transition-transform duration-300 hover:bg-[#003366] hover:translate-y-[-3px]"
+            sx={{
+              color: '#e0f7fa',
+              backgroundColor: '#004080',
+              borderRadius: '30px',
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: 'medium',
+              marginRight: '8px',
+              '&:hover': {
+                backgroundColor: '#003366',
+                transform: 'translateY(-3px)',
+              },
+              position: 'relative',
+              padding: '8px 16px',
+            }}
           >
             Login
-            <span className="absolute bottom-[-5px] left-0 w-full h-[3px] bg-[#007bff] transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 origin-left"></span>
-          </Link>
-          <Link
+            <span
+              style={{
+                position: 'absolute',
+                bottom: '-5px',
+                left: 0,
+                width: '100%',
+                height: '3px',
+                backgroundColor: '#007bff',
+                transform: 'scaleX(0)',
+                transition: 'transform 0.3s ease',
+              }}
+              className="underline-hover"
+            />
+          </Button>
+          <Button
+            component={Link}
             to="/register"
-            className="relative inline-block font-medium px-4 py-2 text-[#e0f7fa] bg-[#004080] rounded-3xl text-lg group transition-transform duration-300 hover:bg-[#003366] hover:translate-y-[-3px]"
+            sx={{
+              color: '#e0f7fa',
+              backgroundColor: '#004080',
+              borderRadius: '30px',
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: 'medium',
+              '&:hover': {
+                backgroundColor: '#003366',
+                transform: 'translateY(-3px)',
+              },
+              position: 'relative',
+              padding: '8px 16px',
+            }}
           >
             Register
-            <span className="absolute bottom-[-5px] left-0 w-full h-[3px] bg-[#007bff] transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100 origin-left"></span>
-          </Link>
+            <span
+              style={{
+                position: 'absolute',
+                bottom: '-5px',
+                left: 0,
+                width: '100%',
+                height: '3px',
+                backgroundColor: '#007bff',
+                transform: 'scaleX(0)',
+                transition: 'transform 0.3s ease',
+              }}
+              className="underline-hover"
+            />
+          </Button>
         </div>
-      </div>
-    </nav>
+      </Toolbar>
+    </AppBar>
   );
 };
 

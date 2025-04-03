@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { TextField, Button, Typography, Box } from '@mui/material';
 
 const apiurl = import.meta.env.VITE_API_URL;
 
@@ -42,71 +43,93 @@ const Register = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-teal-500">
-        <div className="p-8 rounded-lg shadow-lg max-w-sm w-full hover:shadow-2xl">
-          <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">Register</h2>
+      <Box 
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          background: 'linear-gradient(to right, #2196f3, #00bcd4)',
+        }}
+      >
+        <Box
+          sx={{
+            p: 4,
+            borderRadius: 2,
+            boxShadow: 3,
+            width: '100%',
+            maxWidth: 400,
+            backgroundColor: 'white',
+          }}
+        >
+          <Typography variant="h4" align="center" sx={{ mb: 4 }}>
+            Register
+          </Typography>
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-medium mb-2">Username</label>
-              <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your username"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-gray-600 text-sm font-medium mb-2">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your password"
-                required
-              />
-            </div>
+            <TextField
+              label="Username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              label="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              type="password"
+              fullWidth
+              required
+              sx={{ mb: 2 }}
+            />
             {errorMessage && (
-              <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+              <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+                {errorMessage}
+              </Typography>
             )}
             {successMessage && (
-              <p className="text-green-500 text-sm mb-4">{successMessage}</p>
+              <Typography color="success" variant="body2" sx={{ mb: 2 }}>
+                {successMessage}
+              </Typography>
             )}
-            <button
+            <Button
               type="submit"
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+              variant="contained"
+              fullWidth
+              sx={{
+                backgroundColor: 'gray',
+                '&:hover': { backgroundColor: 'gray', opacity: 0.8 },
+              }}
             >
               Register
-            </button>
-            <div className="flex justify-center items-center mt-4">
-              <p className="mr-2">Already have an account?</p>
-              <button
-                type="button"
-                className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Typography variant="body2" sx={{ mr: 1 }}>
+                Already have an account?
+              </Typography>
+              <Button
+                variant="text"
+                color="primary"
                 onClick={() => navigate('/login')}
               >
                 Login
-              </button>
-            </div>
+              </Button>
+            </Box>
           </form>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </div>
   );
 };

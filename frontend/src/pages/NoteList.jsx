@@ -1,11 +1,48 @@
 import axios from 'axios';
 import { useState, useRef, useEffect } from 'react';
 import { FaTrash, FaEdit } from 'react-icons/fa';
-import './NoteList.css';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
+import { IconButton } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 const apiurl = import.meta.env.VITE_API_URL;
 
+const useStyles = makeStyles({
+  noteContainer: {
+    backgroundColor: '#4DB6AC',
+    padding: '16px',
+    borderRadius: '8px',
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+    position: 'relative',
+    overflow: 'hidden',
+    border: '2px solid #00796B',
+    marginBottom: '16px',
+  },
+  noteHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '12px',
+  },
+  noteTitle: {
+    fontSize: '24px',
+    fontWeight: '600',
+    color: '#00796B',
+  },
+  noteContent: {
+    color: '#616161',
+    marginTop: '8px',
+  },
+  readMoreButton: {
+    color: '#0288D1',
+    cursor: 'pointer',
+  },
+  dialogContent: {
+    minWidth: '400px',
+  },
+});
+
 const NoteList = ({ notes, setNotes }) => {
+  const classes = useStyles();
   const [loadingId, setLoadingId] = useState(null);
   const [editNoteId, setEditNoteId] = useState(null);
   const [updatedTitle, setUpdatedTitle] = useState('');
@@ -35,7 +72,6 @@ const NoteList = ({ notes, setNotes }) => {
     } finally {
       setLoadingId(null);
       setConfirmDelete({ visible: false, id: null });
-      window.location.reload();
     }
   };
 
@@ -95,130 +131,110 @@ const NoteList = ({ notes, setNotes }) => {
   }, [notes]);
 
   return (
-    <div className="p-6 min-h-screen rounded-lg from-indigo-500 via-purple-500 to-pink-500">
-      <div className="max-w-full">
-        {notes.length === 0 ? (
-          <p className="text-center text-white col-span-full">No notes available.</p>
-        ) : (
-          notes.map((note) => (
-            <div
-              key={note._id}
-              className="bg-teal-300 p-4 rounded-lg shadow-xl transform transition-transform hover:shadow-2xl relative overflow-hidden border-2 border-teal-400 scrollableContent"
-            >
-              <div className="absolute top-0 right-0 p-2 flex space-x-2">
-                <p>
-                   Created at: {formatDate(note.createdAt)} <br />
-                   Modified at: {formatDate(note.updatedAt)}
-                </p>
-                <button
-                  onClick={() => handleEdit(note)}
-                  disabled={loadingId === note._id}
-                  className="bg-blue-500 hover:bg-blue-700 text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110"
-                >
-                  <FaEdit className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDeleteClick(note._id)}
-                  disabled={loadingId === note._id}
-                  className="bg-red-500 hover:bg-red-700 text-white p-2 rounded-full focus:outline-none transition-transform transform hover:scale-110"
-                >
-                  <FaTrash className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="flex items-center mb-3">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
-                  {note.title[0]}
-                </div>
-                <h3 className="text-3xl font-semibold text-teal-800">{note.title}</h3>
-              </div>
-              <div
-                ref={(el) => (contentRefs.current[note._id] = el)}
-                className={`transition-all duration-300 ease-in-out ${expandedNoteId === note._id ? 'max-h-[80vh] overflow-auto' : 'max-h-80 overflow-hidden'} scrollableContent`}
+    <Box p={6} minHeight="100vh" sx={{ background: 'linear-gradient(90deg, rgba(28, 78, 141, 0.8), rgba(0, 150, 136, 0.8))' }}>
+      {notes.length === 0 ? (
+        <Typography align="center" variant="h6" color="white">
+          No notes available.
+        </Typography>
+      ) : (
+        notes.map((note) => (
+          <Box key={note._id} className={classes.noteContainer}>
+            <Box className={classes.noteHeader}>
+              <Typography variant="body2" color="textSecondary" sx={{ marginRight: 2 }}>
+                Created at: {formatDate(note.createdAt)} <br />
+                Modified at: {formatDate(note.updatedAt)}
+              </Typography>
+              <IconButton
+                onClick={() => handleEdit(note)}
+                disabled={loadingId === note._id}
+                color="primary"
               >
-                <p className="text-gray-800 mt-2">{note.content}</p>
-              </div>
-              {showReadMore[note._id] && (
-                <button
-                  onClick={() => toggleExpandNote(note._id)}
-                  className="text-blue-500 m-2 focus:outline-none hover:underline"
-                >
-                  {expandedNoteId === note._id ? 'Read Less' : 'Read More'}
-                </button>
-              )}
-            </div>
-          ))
-        )}
-      </div>
+                <FaEdit />
+              </IconButton>
+              <IconButton
+                onClick={() => handleDeleteClick(note._id)}
+                disabled={loadingId === note._id}
+                color="secondary"
+              >
+                <FaTrash />
+              </IconButton>
+            </Box>
+            <Typography variant="h6" className={classes.noteTitle}>
+              {note.title}
+            </Typography>
+            <Box
+              ref={(el) => (contentRefs.current[note._id] = el)}
+              sx={{
+                maxHeight: expandedNoteId === note._id ? '80vh' : '200px',
+                overflow: expandedNoteId === note._id ? 'auto' : 'hidden',
+                transition: 'max-height 0.3s ease-in-out',
+              }}
+            >
+              <Typography variant="body1" color="textPrimary" className={classes.noteContent}>
+                {note.content}
+              </Typography>
+            </Box>
+            {showReadMore[note._id] && (
+              <Button
+                onClick={() => toggleExpandNote(note._id)}
+                className={classes.readMoreButton}
+              >
+                {expandedNoteId === note._id ? 'Read Less' : 'Read More'}
+              </Button>
+            )}
+          </Box>
+        ))
+      )}
 
       {editNoteId && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center">
-          <form
-            onSubmit={handleUpdate}
-            className="bg-gray-800 p-8 rounded-lg shadow-2xl w-11/12 max-w-lg"
-          >
-            <h2 className="text-2xl font-bold mb-6 text-teal-600">Edit Note</h2>
-            <label className="block mb-4">
-              <span className="text-gray-200 text-lg font-medium">Title</span>
-              <input
-                type="text"
-                value={updatedTitle}
-                onChange={(e) => setUpdatedTitle(e.target.value)}
-                className="form-input mt-1 block w-full p-2 border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
-                required
-              />
-            </label>
-            <label className="block mb-6">
-              <span className="text-gray-200 text-lg font-medium">Content</span>
-              <textarea
-                value={updatedContent}
-                onChange={(e) => setUpdatedContent(e.target.value)}
-                className="form-textarea mt-1 p-2 block w-full border-gray-600 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
-                rows="6"
-                required
-              />
-            </label>
-            <div className="flex justify-end space-x-4">
-              <button
-                type="submit"
-                className="bg-teal-500 hover:bg-teal-700 text-white px-5 py-2 rounded-md shadow-md"
-              >
-                Update
-              </button>
-              <button
-                type="button"
-                onClick={() => setEditNoteId(null)}
-                className="bg-gray-600 hover:bg-gray-800 text-white px-5 py-2 rounded-md shadow-md"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
+        <Dialog open={true} onClose={() => setEditNoteId(null)}>
+          <DialogTitle>Edit Note</DialogTitle>
+          <DialogContent className={classes.dialogContent}>
+            <TextField
+              label="Title"
+              value={updatedTitle}
+              onChange={(e) => setUpdatedTitle(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Content"
+              value={updatedContent}
+              onChange={(e) => setUpdatedContent(e.target.value)}
+              fullWidth
+              multiline
+              rows={4}
+              margin="normal"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setEditNoteId(null)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleUpdate} color="primary">
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
 
       {confirmDelete.visible && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h3 className="text-xl font-semibold mb-4">Confirm Deletion</h3>
-            <p className="mb-4">Are you sure you want to delete this note?</p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={handleDeleteConfirm}
-                className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md shadow-md"
-              >
-                Delete
-              </button>
-              <button
-                onClick={handleDeleteCancel}
-                className="bg-gray-600 hover:bg-gray-800 text-white px-4 py-2 rounded-md shadow-md"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <Dialog open={true} onClose={handleDeleteCancel}>
+          <DialogTitle>Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <Typography>Are you sure you want to delete this note?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteCancel} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteConfirm} color="primary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
-    </div>
+    </Box>
   );
 };
 

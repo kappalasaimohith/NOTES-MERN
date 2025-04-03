@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Button, Typography, List, ListItem, Drawer, Box, Divider } from '@mui/material';
 import NoteList from './NoteList';
 import NoteForm from './NoteForm';
 import UserProfile from './UserProfile';
@@ -33,34 +34,70 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen max-w-screen bg-gray-200 flex">
-      <div className="w-1/4 bg-gray-500 p-4 space-y-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-extrabold text-yellow-300">Notes</h2>
-          <button
-            className="px-4 py-2 bg-red-700 text-gray-200 font-bold rounded-lg shadow-md hover:bg-red-900 transition duration-300"
-            onClick={logout}
-          >
-            Logout
-          </button>
-        </div>
-        <div className="space-y-1">
-          {notes.map((note) => (
-            <button
-              key={note._id}
-              className="block w-full text-left p-2 rounded-lg bg-gray-700 text-gray-100 hover:bg-gray-600"
-              onClick={() => setSelectedNote(note)}
+    <Box display="flex" minHeight="100vh">
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: 250,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: 250,
+            backgroundColor: '#333',
+            color: '#e0f7fa',
+          },
+        }}
+      >
+        <Box p={2}>
+          <Box display="flex" justifyContent="space-between" mb={2}>
+            <Typography variant="h6" sx={{ color: '#ffeb3b', fontWeight: 'bold' }}>
+              Notes
+            </Typography>
+            <Button
+              onClick={logout}
+              variant="contained"
+              sx={{
+                backgroundColor: '#d32f2f',
+                '&:hover': { backgroundColor: '#c62828' },
+                color: '#fff',
+              }}
             >
-              {note.title}
-            </button>
-          ))}
-        </div>
-        <div className="mt-auto">
-          <NoteForm setNotes={setNotes} />
-          <UserProfile /> 
-        </div>
-      </div>
-      <div className="w-full bg-blue-500 p-4">
+              Logout
+            </Button>
+          </Box>
+          <List>
+            {notes.map((note) => (
+              <ListItem
+                button
+                key={note._id}
+                sx={{
+                  backgroundColor: '#616161',
+                  color: '#fff',
+                  mb: 1,
+                  '&:hover': { backgroundColor: '#757575' },
+                }}
+                onClick={() => setSelectedNote(note)}
+              >
+                {note.title}
+              </ListItem>
+            ))}
+          </List>
+          <Divider sx={{ my: 2, borderColor: '#777' }} />
+          <Box sx={{ position: 'absolute', bottom: 20, width: '100%' }}>
+            <NoteForm setNotes={setNotes} />
+            <UserProfile />
+          </Box>
+        </Box>
+      </Drawer>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          backgroundColor: '#1976d2',
+          color: '#e0f7fa',
+          padding: 2,
+        }}
+      >
         {selectedNote ? (
           <NoteList
             notes={[selectedNote]}
@@ -73,10 +110,12 @@ const Dashboard = () => {
             }
           />
         ) : (
-          <p className='text-center text-gray-200'>Select a note to view details</p>
-        )}  
-      </div>
-    </div>
+          <Typography variant="h6" align="center" color="textSecondary">
+            Select a note to view details
+          </Typography>
+        )}
+      </Box>
+    </Box>
   );
 };
 

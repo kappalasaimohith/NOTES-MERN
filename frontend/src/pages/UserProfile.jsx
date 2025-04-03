@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 
 const apiurl = import.meta.env.VITE_API_URL;
 
@@ -68,33 +69,42 @@ const UserProfile = () => {
 
   return (
     <div>
-      <button
+      <Button
+        variant="contained"
+        color="primary"
         onClick={() => setModalOpen(true)}
-        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"
+        sx={{ mt: 2 }}
       >
         View Profile
-      </button>
-      {modalOpen && userData && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-            <p><strong>Username:</strong> {userData.username}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <button
-              onClick={() => setModalOpen(false)}
-              className="mt-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-300"
-            >
-              Close
-            </button>
-            <button
-              onClick={handleDeleteAccount}
-              className="mt-4 ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300"
-            >
-              Delete Account
-            </button>
-          </div>
-        </div>
-      )}
+      </Button>
+
+      <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
+        <DialogTitle>User Profile</DialogTitle>
+        <DialogContent>
+          {userData ? (
+            <>
+              <Typography variant="body1">
+                <strong>Username:</strong> {userData.username}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Email:</strong> {userData.email}
+              </Typography>
+            </>
+          ) : (
+            <Typography variant="body2" color="textSecondary">
+              Loading user data...
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setModalOpen(false)} color="secondary">
+            Close
+          </Button>
+          <Button onClick={handleDeleteAccount} color="error">
+            Delete Account
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

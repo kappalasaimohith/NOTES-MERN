@@ -20,12 +20,21 @@ const Dashboard = () => {
         const res = await axios.get(`${apiurl}/api/notes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setNotes(res.data);
+        // setNotes(res.data);
+        if (res.status === 200) {
+          setNotes(res.data);
+        } else {
+          console.error(`Error: ${res.status} - ${res.statusText}`);
+        }
       } catch (error) {
-        console.error(error);
+        console.error('Failed to fetch notes:', error.response ? error.response.data : error.message);
       }
     };
-    fetchNotes();
+    if (token) {
+      fetchNotes();
+    } else {
+      console.error('No token found');
+    }
   }, [token]);
 
   const logout = () => {

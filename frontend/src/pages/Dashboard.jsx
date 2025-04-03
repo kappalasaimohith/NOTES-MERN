@@ -13,17 +13,16 @@ const Dashboard = () => {
   const [selectedNote, setSelectedNote] = useState(null);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
-
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const res = await axios.get(`${apiurl}/api/notes`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // setNotes(res.data);
+
         if (res.status === 200) {
           setNotes(res.data);
-          console.log('Fetched notes:', res.data);
+          // console.log('Fetched notes:', res.data);
         } else {
           console.error(`Error: ${res.status} - ${res.statusText}`);
         }
@@ -31,6 +30,7 @@ const Dashboard = () => {
         console.error('Failed to fetch notes:', error.response ? error.response.data : error.message);
       }
     };
+
     if (token) {
       fetchNotes();
     } else {
@@ -41,6 +41,21 @@ const Dashboard = () => {
   const logout = () => {
     localStorage.removeItem('token');
     navigate('/login');
+  };
+
+  const deleteNote = async (id) => {
+    try {
+      await axios.delete(`${apiurl}/api/notes/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
+      if (selectedNote && selectedNote._id === id) {
+        setSelectedNote(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete note:', error.response ? error.response.data : error.message);
+    }
   };
 
   return (
@@ -74,23 +89,43 @@ const Dashboard = () => {
               Logout
             </Button>
           </Box>
+
           <List>
-            {notes.map((note) => (
-              <ListItem
-                button = {true}
-                key={note._id}
-                sx={{
-                  backgroundColor: '#616161',
-                  color: '#fff',
-                  mb: 1,
-                  '&:hover': { backgroundColor: '#757575' },
-                }}
-                onClick={() => setSelectedNote(note)}
-              >
-                {note.title}
-              </ListItem>
-            ))}
+            {notes.length > 0 ? (
+              notes.map((note) => (
+                <ListItem
+                  // button = {true}
+                  key={note._id}
+                  sx={{
+                    backgroundColor: '#616161',
+                    color: '#fff',
+                    mb: 1,
+                    '&:hover': { backgroundColor: '#757575' },
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setSelectedNote(note)}
+                >
+                  {note.title}
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteNote(note._id);
+                    }}
+                    variant="outlined"
+                    color="error"
+                    sx={{ marginLeft: 2 }}
+                  >
+                    Delete
+                  </Button>
+                </ListItem>
+              ))
+            ) : (
+              <Typography variant="h6" align="center" color="textSecondary">
+                No notes available
+              </Typography>
+            )}
           </List>
+
           <Divider sx={{ my: 2, borderColor: '#777' }} />
           <Box sx={{ position: 'absolute', bottom: 20, width: '100%' }}>
             <NoteForm setNotes={setNotes} />

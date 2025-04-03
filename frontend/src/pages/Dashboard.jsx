@@ -23,6 +23,7 @@ const Dashboard = () => {
         // setNotes(res.data);
         if (res.status === 200) {
           setNotes(res.data);
+          console.log('Fetched notes:', res.data);
         } else {
           console.error(`Error: ${res.status} - ${res.statusText}`);
         }
@@ -76,7 +77,7 @@ const Dashboard = () => {
           <List>
             {notes.map((note) => (
               <ListItem
-                button
+                button = {true}
                 key={note._id}
                 sx={{
                   backgroundColor: '#616161',

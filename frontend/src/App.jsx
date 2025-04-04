@@ -1,4 +1,3 @@
-// App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './pages/Register';
@@ -26,4 +25,4 @@ function App() {
   );
 }
 
-export default App;  // <-- Make sure to export the component as default
+export default App;

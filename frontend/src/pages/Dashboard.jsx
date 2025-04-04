@@ -13,7 +13,14 @@ const Dashboard = () => {
   const [selectedNote, setSelectedNote] = useState(null);
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+
   useEffect(() => {
+    if (!token) {
+      console.error('No token found. Please login again.');
+      navigate('/login');
+      return;
+    }
+
     const fetchNotes = async () => {
       try {
         const res = await axios.get(`${apiurl}/api/notes`, {
@@ -22,7 +29,6 @@ const Dashboard = () => {
 
         if (res.status === 200) {
           setNotes(res.data);
-          // console.log('Fetched notes:', res.data);
         } else {
           console.error(`Error: ${res.status} - ${res.statusText}`);
         }
@@ -31,12 +37,8 @@ const Dashboard = () => {
       }
     };
 
-    if (token) {
-      fetchNotes();
-    } else {
-      console.error('No token found');
-    }
-  }, [token]);
+    fetchNotes();
+  }, [navigate, token]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -94,7 +96,6 @@ const Dashboard = () => {
             {notes.length > 0 ? (
               notes.map((note) => (
                 <ListItem
-                  // button = {true}
                   key={note._id}
                   sx={{
                     backgroundColor: '#616161',

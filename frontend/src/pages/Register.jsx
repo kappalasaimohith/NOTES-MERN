@@ -2,7 +2,15 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { TextField, Button, Typography, Box } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Fade,
+  Alert,
+  Stack,
+} from '@mui/material';
 
 const apiurl = import.meta.env.VITE_API_URL;
 
@@ -26,45 +34,49 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post(`${apiurl}/api/auth/register`, formData);
-      console.log(res.data);
-      setSuccessMessage('Registration successful! You can now log in.');
+      setSuccessMessage('🎉 Registration successful! Redirecting to login...');
       setFormData({ username: '', email: '', password: '' });
-      setTimeout(() => navigate('/login'), 5000);
+      setTimeout(() => navigate('/login'), 3000);
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.msg) {
+      if (error.response?.data?.msg) {
         setErrorMessage(error.response.data.msg);
       } else {
-        setErrorMessage('Registration failed! Please try again.');
+        setErrorMessage('Registration failed. Please try again.');
       }
-      console.error('Registration error:', error);
     }
   };
 
   return (
     <div>
       <Navbar />
-      <Box 
+      <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
-          background: 'linear-gradient(to right, #2196f3, #00bcd4)',
+          background: 'linear-gradient(135deg, #667eea, #764ba2)',
+          p: 2,
         }}
       >
         <Box
           sx={{
             p: 4,
-            borderRadius: 2,
-            boxShadow: 3,
+            borderRadius: 3,
+            boxShadow: 4,
             width: '100%',
-            maxWidth: 400,
+            maxWidth: 420,
             backgroundColor: 'white',
+            textAlign: 'center',
           }}
         >
-          <Typography variant="h4" align="center" sx={{ mb: 4 }}>
-            Register
+          <Typography variant="h4" sx={{ mb: 1.5, fontWeight: 'bold', color: '#333' }}>
+            Create Account
           </Typography>
+          <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
+            Sign up to access your personal notes dashboard.
+          </Typography>
+
           <form onSubmit={handleSubmit}>
             <TextField
               label="Username"
@@ -78,6 +90,7 @@ const Register = () => {
             <TextField
               label="Email"
               name="email"
+              type="email"
               value={formData.email}
               onChange={handleChange}
               fullWidth
@@ -87,42 +100,48 @@ const Register = () => {
             <TextField
               label="Password"
               name="password"
+              type="password"
               value={formData.password}
               onChange={handleChange}
-              type="password"
               fullWidth
               required
               sx={{ mb: 2 }}
             />
-            {errorMessage && (
-              <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-                {errorMessage}
-              </Typography>
-            )}
-            {successMessage && (
-              <Typography color="success" variant="body2" sx={{ mb: 2 }}>
-                {successMessage}
-              </Typography>
-            )}
+
+            <Stack spacing={2} sx={{ mb: 2 }}>
+              <Fade in={!!errorMessage}>
+                <div>{errorMessage && <Alert severity="error">{errorMessage}</Alert>}</div>
+              </Fade>
+              <Fade in={!!successMessage}>
+                <div>{successMessage && <Alert severity="success">{successMessage}</Alert>}</div>
+              </Fade>
+            </Stack>
+
             <Button
               type="submit"
               variant="contained"
               fullWidth
               sx={{
-                backgroundColor: 'gray',
-                '&:hover': { backgroundColor: 'gray', opacity: 0.8 },
+                background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
+                color: '#fff',
+                py: 1.5,
+                fontWeight: 'bold',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #5a0eb1, #1d63d4)',
+                },
               }}
             >
               Register
             </Button>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
               <Typography variant="body2" sx={{ mr: 1 }}>
                 Already have an account?
               </Typography>
               <Button
                 variant="text"
-                color="primary"
                 onClick={() => navigate('/login')}
+                sx={{ color: '#2575fc', fontWeight: 'bold' }}
               >
                 Login
               </Button>

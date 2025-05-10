@@ -10,6 +10,7 @@ const sendEmail = require('../utils/sendEmail');
 const generateWelcomeEmail = require('../utils/registerTemplate');
 const resetPasswordTemplate = require('../utils/resetPasswordTemplate');
 const apiurl = process.env.FRONTEND_URL;
+// console.log('Frontend URL:', apiurl);
 
 router.post('/register', async (req, res) => {
   try {
